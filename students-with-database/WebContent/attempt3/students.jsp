@@ -1,7 +1,7 @@
 <html>
 
 <body>
-<h2>Attempt 3</h2>
+<h2>Attempt 355555</h2>
 <table>
     <tr>
         <td valign="top">
@@ -152,6 +152,8 @@
                 </td>
 
                 <%-- Get the pid --%>
+<!--                 EXTRA TEXT -->
+                <%=rs.getString("first_name")%>
                 <td>
                     <input value="<%=rs.getInt("pid")%>" name="pid" size="15"/>
                 </td>
