@@ -25,7 +25,7 @@
 
                 // Open a connection to the database using DriverManager
                 conn = DriverManager.getConnection(
-                    "jdbc:postgresql://localhost/cse135?" +
+                    "jdbc:postgresql://localhost/postgres?" +
                     "user=postgres&password=postgres");
             %>
             
@@ -41,7 +41,7 @@
                     // Create the prepared statement and use it to
                     // INSERT user values INTO the users table.
                     pstmt = conn
-                    .prepareStatement("INSERT INTO user (pid, first_name, middle_name, last_name) VALUES (?, ?, ?, ?)");
+                    .prepareStatement("INSERT INTO users (state, role, age, name) VALUES (?, ?, ?, ?)");
 
                     pstmt.setInt(1, Integer.parseInt(request.getParameter("username")));
                     pstmt.setString(2, request.getParameter("usertype"));
@@ -111,11 +111,11 @@
 
                 // Use the created statement to SELECT
                 // the student attributes FROM the User table.
-                rs = statement.executeQuery("SELECT * FROM user");
+                rs = statement.executeQuery("SELECT * FROM users");
             %>
             
             <table border="1">
-            <form action="attempt3/students.jsp" method="POST">
+            <form action="shoppingApp/signup.jsp" method="POST">
 	            Username: <input type="text" name="username">
 	        	<select>
 	        		<option value="owner" name="usertype">Owner</option>
@@ -149,33 +149,34 @@
 
                 Get the pid
                 <td>
-                    <input value="<%=rs.getInt("pid")%>" name="pid" size="15"/>
+                    <input value="<%=rs.getString("state")%>" name="state" size="15"/>
                 </td>
 
                 Get the first name
                 <td>
-                    <input value="<%=rs.getString("first_name")%>" name="first" size="15"/>
+                    <input value="<%=rs.getString("role")%>" name="role" size="15"/>
                 </td>
 
                 Get the middle name
                 <td>
-                    <input value="<%=rs.getString("middle_name")%>" name="middle" size="15"/>
+                    <input value="<%=rs.getInt("age")%>" name="age" size="15"/>
                 </td>
 
                 Get the last name
                 <td>
-                    <input value="<%=rs.getString("last_name")%>" name="last" size="15"/>
+                    <input value="<%=rs.getString("name")%>" name="name" size="15"/>
                 </td>
 
                 Button
                 <td><input type="submit" value="Update"></td>
                 </form>
+                <!--  
                 <form action="attempt3/students.jsp" method="POST">
                     <input type="hidden" name="action" value="delete"/>
                     <input type="hidden" value="<%=rs.getInt("id")%>" name="id"/>
                     Button
                 <td><input type="submit" value="Delete"/></td>
-                </form>
+                </form>-->
             </tr>
 
             <%
