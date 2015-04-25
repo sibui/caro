@@ -25,7 +25,7 @@
 
                 // Open a connection to the database using DriverManager
                 conn = DriverManager.getConnection(
-                    "jdbc:postgresql://localhost/postgres?" +
+                    "jdbc:postgresql://localhost/cse135?" +
                     "user=postgres&password=postgres");
             %>
             
@@ -43,15 +43,21 @@
                     pstmt = conn
                     .prepareStatement("INSERT INTO users (state, role, age, name) VALUES (?, ?, ?, ?)");
 
-                    pstmt.setInt(1, Integer.parseInt(request.getParameter("username")));
+                    pstmt.setString(4, request.getParameter("username"));
                     pstmt.setString(2, request.getParameter("usertype"));
                     pstmt.setString(3, request.getParameter("age"));
-                    pstmt.setString(4, request.getParameter("state"));
+                    pstmt.setString(1, request.getParameter("state"));
                     int rowCount = pstmt.executeUpdate();
 
                     // Commit transaction
                     conn.commit();
                     conn.setAutoCommit(true);
+                    String username = (String) request.getParameter("username");
+                    application.setAttribute("username", username);
+                    String redirectURL = "home.jsp";
+                    response.sendRedirect(redirectURL);
+                 
+                  
                 }
             %>
             
@@ -115,16 +121,16 @@
             %>
             
             <table border="1">
-            <form action="shoppingApp/signup.jsp" method="POST">
+            <form action="signup.jsp" method="POST">
 	            Username: <input type="text" name="username">
-	        	<select>
+	        	<select name="usertype">
 	        		<option value="owner" name="usertype">Owner</option>
 	        		<option value="customer" name="usertype">Customer</option>
 	        	</select>
-	        	
+	        	<input type="hidden" name="action" value="signup"/>
 	        	Age: <input type="text" name="age">
 	        	
-	        	<select>
+	        	<select name="state">
 	        		<option name="state" value="ca">CA</option>
 	        		<option name="state" value="nv">NV</option>
 	        	</select>
@@ -138,38 +144,31 @@
             %>
 
             <tr>
-                <form action="attempt3/students.jsp" method="POST">
-                    <input type="hidden" name="action" value="update"/>
-                    <input type="hidden" name="id" value="<%=rs.getInt("id")%>"/>
-
-                Get the id
+                
                 <td>
                     <%=rs.getInt("id")%>
                 </td>
 
-                Get the pid
+                
                 <td>
-                    <input value="<%=rs.getString("state")%>" name="state" size="15"/>
+                    <%=rs.getString("state")%>
                 </td>
 
-                Get the first name
+                
                 <td>
-                    <input value="<%=rs.getString("role")%>" name="role" size="15"/>
+                    <%=rs.getString("role")%>
                 </td>
 
-                Get the middle name
+                
                 <td>
-                    <input value="<%=rs.getInt("age")%>" name="age" size="15"/>
+                    <%=rs.getInt("age")%>
                 </td>
 
-                Get the last name
+                
                 <td>
-                    <input value="<%=rs.getString("name")%>" name="name" size="15"/>
+                    <%=rs.getString("name")%>
                 </td>
 
-                Button
-                <td><input type="submit" value="Update"></td>
-                </form>
                 <!--  
                 <form action="attempt3/students.jsp" method="POST">
                     <input type="hidden" name="action" value="delete"/>
@@ -194,10 +193,12 @@
                 // Close the Connection
                 conn.close();
             } catch (SQLException e) {
-
+            	String redirectURL = "unsuccessful.html";
+                response.sendRedirect(redirectURL);
                 // Wrap the SQL exception in a runtime exception to propagate
                 // it upwards
-                throw new RuntimeException(e);
+                
+                //throw new RuntimeException(e);
             }
             finally {
                 // Release resources in a finally block in reverse-order of
