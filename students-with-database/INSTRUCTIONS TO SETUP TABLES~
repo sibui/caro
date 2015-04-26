@@ -1,0 +1,28 @@
+Instructions to add users table:
+
+1.) Open pgadmin 3
+
+2.) Follow steps to add server like in tutorial. (file -> add server ... etc)
+
+3.) After adding server, go to 
+
+Server Groups -> Servers -> Name of server you added -> Databases -> cse135 -> schemas -> public -> tables
+
+4.) Expand  all tables and right click on the each table one at a time and DELETE/DROP it.
+
+5.) Click on the "Execute Arbitrary SQL queries" (the button with a magnifying glass with SQL). Window should pop up.
+
+6.) Click on open file and go to where your CSE135 repository is and go to CSE135 -> students-with-database -> ddl.sql
+
+7.) Select the ddl.sql file and open it. it should appear in the window now.
+
+8.) Click on the "Execute Query" button (green triangle pointing to the right). Upon loading, that button may be invisible, but you just need to hover over the missing icons and it will reappear.
+
+9.) Tables should be now set up and SHOULD work when you run the pages.
+
+
+********************************* 
+If you want to create/edit TABLES, make sure to add it to ddl.sql.
+
+ALL changes in ddl.sql will NOT be reflected in the actual database until you re-execute ddl.sql in PGadmin3
+*********************************

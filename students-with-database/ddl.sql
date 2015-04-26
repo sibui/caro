@@ -1,4 +1,4 @@
-CREATE TABLE students (
+﻿CREATE TABLE students (
     id          SERIAL PRIMARY KEY,
     pid         INTEGER,
     first_name  TEXT,
