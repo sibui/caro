@@ -63,7 +63,7 @@
                     pstmt = conn
                     .prepareStatement("INSERT INTO categories (description, name) VALUES (?, ?)");
 
-                    pstmt.setInt(1, Integer.parseInt(request.getParameter("description")));
+                    pstmt.setString(1, request.getParameter("description"));
                     pstmt.setString(2, request.getParameter("name"));
 
                     int rowCount = pstmt.executeUpdate();
