@@ -65,6 +65,7 @@
 					  if(username != null && username.equals(rs.getString("name")))
 					  {
 						  application.setAttribute("username", username);
+						  application.setAttribute("usertype", rs.getString("role"));
 						  String redirectURL = "home.jsp";
 		                  response.sendRedirect(redirectURL);
 					  }

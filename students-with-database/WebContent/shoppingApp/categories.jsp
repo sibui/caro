@@ -8,10 +8,21 @@
 </head>
 <body>
 
+	
+
+
 	<!--  Precursor text that must appear in every webpage -->
 	 <%
        String username = (String) application.getAttribute("username");
-       if (username == null) {
+	   String usertype = (String) application.getAttribute("usertype");
+	   if(usertype.equals("customer")){
+		   //redirect to another html page since 
+		   //you are a customer with no access to that page
+		   String redirectURL = "noaccess.html";
+           response.sendRedirect(redirectURL);
+		   
+	   }
+	   else if (username == null) {
     	   String redirectURL = "login.jsp";
            response.sendRedirect(redirectURL);
        }

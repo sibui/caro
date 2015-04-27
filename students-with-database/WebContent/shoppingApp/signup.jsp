@@ -54,6 +54,8 @@
                     conn.setAutoCommit(true);
                     String username = (String) request.getParameter("username");
                     application.setAttribute("username", username);
+                    String usertype = (String) request.getParameter("usertype");
+                    application.setAttribute("usertype", usertype);
                     String redirectURL = "home.jsp";
                     response.sendRedirect(redirectURL);
                  
