@@ -25,10 +25,7 @@
 
 <table>
     <tr>
-        <td valign="top">
-            <%-- -------- Include menu HTML code -------- --%>
-            <jsp:include page="/menu.html" />
-        </td>
+
         <td>
             <%-- Import the java.sql package --%>
             <%@ page import="java.sql.*"%>
