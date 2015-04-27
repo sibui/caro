@@ -124,7 +124,7 @@
             </tr>
 
             <tr>
-                <form action="attempt3/students.jsp" method="POST">
+                <form action="students.jsp" method="POST">
                     <input type="hidden" name="action" value="insert"/>
                     <th>&nbsp;</th>
                     <th><input value="" name="pid" size="10"/></th>
@@ -142,7 +142,7 @@
             %>
 
             <tr>
-                <form action="attempt3/students.jsp" method="POST">
+                <form action="students.jsp" method="POST">
                     <input type="hidden" name="action" value="update"/>
                     <input type="hidden" name="id" value="<%=rs.getInt("id")%>"/>
 
@@ -176,7 +176,7 @@
                 <%-- Button --%>
                 <td><input type="submit" value="Update"></td>
                 </form>
-                <form action="attempt3/students.jsp" method="POST">
+                <form action="students.jsp" method="POST">
                     <input type="hidden" name="action" value="delete"/>
                     <input type="hidden" value="<%=rs.getInt("id")%>" name="id"/>
                     <%-- Button --%>
