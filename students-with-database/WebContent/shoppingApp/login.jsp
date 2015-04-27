@@ -53,12 +53,13 @@
             <%
                 // Iterate over the ResultSet
                 String action = (String) request.getParameter("action");
+    			String username = (String) request.getParameter("username");
+
             	if(action != null && action.equals("login"))
             	{
             		
             		//String redirectURL1 = "http://www.google.com";
                     //response.sendRedirect(redirectURL1);
-            		String username = (String) request.getParameter("username");
             		while (rs.next()) 
             		{
 					  if(username != null && username.equals(rs.getString("name")))
@@ -67,13 +68,22 @@
 						  String redirectURL = "home.jsp";
 		                  response.sendRedirect(redirectURL);
 					  }
+				
+					
                     }
-            	}
+            		//outputs that its an incorrect username
+					 out.print(username + " not known. Please use a correct username in textbox.");
+					 
+            
+				  }
+            	
+            	
+       
     
             %>
             
-           
-           
+         
+    
 
             <%-- -------- Close Connection Code -------- --%>
             <%
