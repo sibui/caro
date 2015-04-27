@@ -55,6 +55,7 @@
                 String action = (String) request.getParameter("action");
             	if(action != null && action.equals("login"))
             	{
+            		
             		//String redirectURL1 = "http://www.google.com";
                     //response.sendRedirect(redirectURL1);
             		String username = (String) request.getParameter("username");
@@ -64,13 +65,15 @@
 					  {
 						  application.setAttribute("username", username);
 						  String redirectURL = "home.jsp";
-		                    response.sendRedirect(redirectURL);
+		                  response.sendRedirect(redirectURL);
 					  }
                     }
-            		
             	}
-                
+    
             %>
+            
+           
+           
 
             <%-- -------- Close Connection Code -------- --%>
             <%
@@ -85,6 +88,7 @@
             } catch (SQLException e) {
             	String redirectURL = "unsuccessful.html";
                 response.sendRedirect(redirectURL);
+                
                 // Wrap the SQL exception in a runtime exception to propagate
                 // it upwards
                 
@@ -119,6 +123,7 @@
     </tr>
 </table>
 </body>
+
 
 </html>
 
