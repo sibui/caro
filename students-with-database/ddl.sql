@@ -24,7 +24,8 @@ INSERT INTO users (state, role, age, name) values ('CA', 'owner', '99', 'simon')
 CREATE TABLE categories (
 id SERIAL PRIMARY KEY,
 description TEXT NOT NULL CHECK (char_length(description) > 0),
-name TEXT UNIQUE NOT NULL CHECK (char_length(name) > 0)
+name TEXT UNIQUE NOT NULL CHECK (char_length(name) > 0),
+numProducts INTEGER
 );
 
-INSERT INTO categories(description, name) values ('This is my test description','test');
+INSERT INTO categories(description, name, numProducts) values ('This is my test description','test',0);

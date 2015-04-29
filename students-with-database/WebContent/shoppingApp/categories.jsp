@@ -2,6 +2,10 @@
 
 <body>
 <h2>Categories</h2>
+
+
+
+
 <!--  Precursor text that must appear in every webpage -->
 	 <%
        String username = (String) application.getAttribute("username");
@@ -20,7 +24,14 @@
     %>
     Welcome, <%=username%>!
 
-
+<table>
+	<tr>
+ 		<td valign="top">
+        	<%-- -------- Include browser links HTML code -------- --%>
+            <jsp:include page="/browser.html" />
+ 		</td>
+	</tr>
+</table>
 
 
 <table>
@@ -58,10 +69,11 @@
                     // Create the prepared statement and use it to
                     // INSERT student values INTO the students table.
                     pstmt = conn
-                    .prepareStatement("INSERT INTO categories (description, name) VALUES (?, ?)");
+                    .prepareStatement("INSERT INTO categories (description, name,numProducts) VALUES (?, ?,0)");
 
                     pstmt.setString(1, request.getParameter("description"));
                     pstmt.setString(2, request.getParameter("name"));
+               
 
                     int rowCount = pstmt.executeUpdate();
 
@@ -132,6 +144,7 @@
                 <th>ID</th>
                 <th>Category Name</th>
                 <th>Description</th>
+                <th>Num of products</th>
             </tr>
 
             <tr>
@@ -169,6 +182,14 @@
                 <td>
                     <input value="<%=rs.getString("description")%>" name="description" size="15"/>
                 </td>
+               
+				 <%-- Get the middle name --%>
+                <td>
+                    <input value="<%=rs.getInt("numProducts")%>" name="description" size="15"/>
+                </td>
+               
+				
+
 
                 <%-- Button --%>
                 <td><input type="submit" value="Update"></td>
@@ -197,9 +218,9 @@
                 conn.close();
             } catch (SQLException e) {
 
-                // Wrap the SQL exception in a runtime exception to propagate
-                // it upwards
-                throw new RuntimeException(e);
+				 out.print("Data modification failure. Please refresh the page.");
+				
+                //throw new RuntimeException(e);
             }
             finally {
                 // Release resources in a finally block in reverse-order of
