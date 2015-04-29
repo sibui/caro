@@ -29,3 +29,12 @@ numProducts INTEGER
 );
 
 INSERT INTO categories(description, name, numProducts) values ('This is my test description','test',0);
+
+CREATE TABLE products (
+name TEXT NOT NULL CHECK (char_length(name) > 0),
+sku TEXT UNIQUE NOT NULL CHECK (char_length(sku) > 0),
+category TEXT NOT NULL CHECK (char_length(category) > 0),
+price INTEGER
+);
+
+INSERT INTO products(name, sku, category, price) values ('testname', 'test008', 'tacos', 0);

@@ -117,7 +117,8 @@
                     // Create the prepared statement and use it to
                     // DELETE students FROM the Students table.
                     pstmt = conn
-                        .prepareStatement("DELETE FROM categories WHERE name = ?");
+                        .prepareStatement("DELETE FROM categories WHERE name = ?"
+                        					+ " AND numProducts = 0");
 
                     pstmt.setString(1, request.getParameter("name"));
                     int rowCount = pstmt.executeUpdate();
