@@ -45,6 +45,7 @@
             
             Connection conn = null;
             PreparedStatement pstmt = null;
+            PreparedStatement pstmt2 = null;
             ResultSet rs = null;
             
             try {
@@ -117,11 +118,26 @@
                     // Create the prepared statement and use it to
                     // DELETE students FROM the Students table.
                     pstmt = conn
-                        .prepareStatement("DELETE FROM categories WHERE name = ?"
-                        					+ " AND numProducts = 0");
+                        .prepareStatement("DELETE FROM categories WHERE name = ?");
 
                     pstmt.setString(1, request.getParameter("name"));
-                    int rowCount = pstmt.executeUpdate();
+                    Statement statement1 = conn.createStatement();
+                    pstmt2 = conn.prepareStatement("select categories.name, categories.description, count(products.name) as numProduct " +
+                    		"from categories LEFT JOIN products ON categories.name = products.category where categories.name = ? " +
+                    		"group by categories.name, categories.description having count(products.name) = 0");
+                    pstmt2.setString(1, request.getParameter("name"));
+                    rs = pstmt2.executeQuery();
+                    
+                    if(rs.next())
+                    {
+                    	int rowCount = pstmt.executeUpdate();
+                    }
+                    else
+                    {
+       				 out.print("Data modification failure. Click <a href=\"categories.jsp\">here</a> to try again.");
+	
+                    }
+                    
 
                     // Commit transaction
                     conn.commit();
@@ -136,7 +152,10 @@
 
                 // Use the created statement to SELECT
                 // the student attributes FROM the Student table.
-                rs = statement.executeQuery("SELECT * FROM categories");
+                rs = statement.executeQuery("select categories.name, categories.description, count(products.name) as numProduct " +
+                		"from categories LEFT JOIN products ON categories.name = products.category " +
+                		"group by categories.name, categories.description");
+                //rs = statement.executeQuery("select * from products");
             %>
             
             <!-- Add an HTML table header row to format the results -->
@@ -167,11 +186,10 @@
             <tr>
                 <form action="categories.jsp" method="POST">
                     <input type="hidden" name="action" value="update"/>
-                    <input type="hidden" name="id" value="<%=rs.getInt("id")%>"/>
+<%--                     <input type="hidden" name="id" value="<%=rs.getInt("id")%>"/> --%>
 
                 <%-- Get the id --%>
                 <td>
-                    <%=rs.getInt("id")%>
                 </td>
 
                 <%-- Get the first name --%>
@@ -186,20 +204,27 @@
                
 				 <%-- Get the middle name --%>
                 <td>
-                    <input value="<%=rs.getInt("numProducts")%>" name="description" size="15"/>
+                    <input value="<%=rs.getInt("numProduct")%>" name="description" size="15"/>
                 </td>
                
 				
 
 
                 <%-- Button --%>
+                 
                 <td><input type="submit" value="Update"></td>
+                
                 </form>
                 <form action="categories.jsp" method="POST">
                     <input type="hidden" name="action" value="delete"/>
                     <input type="hidden" value="<%=rs.getString("name")%>" name="name"/>
                     <%-- Button --%>
-                <td><input type="submit" value="Delete"/></td>
+                <%
+                if(rs.getInt("numProduct") == 0)
+                {
+                	out.print("<td><input type=\"submit\" value=\"Delete\"/></td>");
+                }
+                %>
                 </form>
             </tr>
 
@@ -219,7 +244,7 @@
                 conn.close();
             } catch (SQLException e) {
 
-				 out.print("Data modification failure. Please refresh the page.");
+				 out.print("Data modification failure. Click <a href=\"categories.jsp\">here</a> to try again.");
 				
                 //throw new RuntimeException(e);
             }
