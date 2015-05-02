@@ -10,14 +10,14 @@
 	 <%
        String username = (String) application.getAttribute("username");
 	   String usertype = (String) application.getAttribute("usertype");
-	   if(usertype.equals("customer")){
+	   if( usertype != null && !usertype.equals("owner"))
+	   {
 		   //redirect to another html page since 
 		   //you are a customer with no access to that page
 		   String redirectURL = "noaccess.html";
            response.sendRedirect(redirectURL);
-		   
 	   }
-	   else if (username == null) {
+	   else if (username == null || usertype == null ) {
     	   String redirectURL = "login.jsp";
            response.sendRedirect(redirectURL);
        }

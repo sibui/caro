@@ -38,7 +38,7 @@
 
                 // Use the created statement to SELECT
                 // the student attributes FROM the User table.
-                rs = statement.executeQuery("SELECT * FROM users");
+                
             %>
             
             <table border="1">
@@ -60,18 +60,26 @@
             		
             		//String redirectURL1 = "http://www.google.com";
                     //response.sendRedirect(redirectURL1);
-            		while (rs.next()) 
-            		{
-					  if(username != null && username.equals(rs.getString("name")))
+                     pstmt = conn
+                    .prepareStatement("select * from users where name = ?");
+                     
+                     pstmt.setString(1, username);
+                    
+
+					  if(username != null)
 					  {
-						  application.setAttribute("username", username);
-						  application.setAttribute("usertype", rs.getString("role"));
-						  String redirectURL = "home.jsp";
-		                  response.sendRedirect(redirectURL);
+						  rs = pstmt.executeQuery();
+						  if(rs.next() && username.equals(rs.getString("name")))
+						  {
+						  	application.setAttribute("username", username);
+						  	application.setAttribute("usertype", rs.getString("role"));
+						  	String redirectURL = "home.jsp";
+		                  	response.sendRedirect(redirectURL);
+						  }
 					  }
+							  
 				
 					
-                    }
             		//outputs that its an incorrect username
 					 out.print(username + " not known. Please use a correct username in textbox.");
 					 
@@ -89,7 +97,10 @@
             <%-- -------- Close Connection Code -------- --%>
             <%
                 // Close the ResultSet
-                rs.close();
+                if(rs != null) 
+                {
+                	rs.close();
+                }
 
                 // Close the Statement
                 statement.close();
@@ -97,13 +108,13 @@
                 // Close the Connection
                 conn.close();
             } catch (SQLException e) {
-            	String redirectURL = "unsuccessful.html";
-                response.sendRedirect(redirectURL);
+            	//String redirectURL = "unsuccessful.html";
+                //response.sendRedirect(redirectURL);
                 
                 // Wrap the SQL exception in a runtime exception to propagate
                 // it upwards
                 
-                //throw new RuntimeException(e);
+                throw new RuntimeException(e);
             }
             finally {
                 // Release resources in a finally block in reverse-order of
