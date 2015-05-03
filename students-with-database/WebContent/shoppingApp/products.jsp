@@ -47,7 +47,11 @@
             
             Connection conn = null;
             PreparedStatement pstmt = null;
+            PreparedStatement pstmt2 = null;
+            PreparedStatement pstmt3 = null;
             ResultSet rs = null;
+            ResultSet rsCategory = null;
+            
             
             try {
                 // Registering Postgresql JDBC driver with the DriverManager
@@ -70,36 +74,67 @@
 
                     // Create the prepared statement and use it to
                     // INSERT student values INTO the students table.
-                    pstmt = conn
-                    .prepareStatement("INSERT INTO products (name, sku, category, price) VALUES (?, ?, ?, ?)");
+                    if(request.getParameter("name") != "" && request.getParameter("sku") != "" && request.getParameter("category") != "" && request.getParameter("price") != "") 
+                    {    	
+	                    
+	                    pstmt = conn
+	                    .prepareStatement("INSERT INTO products (name, sku, category, price) VALUES (?, ?, ?, ?)");
+	
+	                    pstmt.setString(1, request.getParameter("name"));
+	                    pstmt.setString(2, request.getParameter("sku"));
+	                    pstmt.setString(3, request.getParameter("category"));
+	                    pstmt.setInt(4, Integer.parseInt(request.getParameter("price")));
+	               
+	
+	                    
+	                    Statement statement1 = conn.createStatement();
+	                    //check to see if sku is unique
+	                    pstmt2 = conn.prepareStatement("select * from products where sku = ?");
+	                    pstmt2.setString(1, request.getParameter("sku"));
+	                    rs = pstmt2.executeQuery();
+	                    
+	                    //check to see if category is a non-category
+	                    pstmt3 = conn.prepareStatement("select categories.name from categories where name = ?");
+	                    pstmt3.setString(1, request.getParameter("category")); //deals with injecting 
+	                    
+						//check for unique sku
+	                    if (!rs.next()) 
+	                    {
+	                    	if( Integer.parseInt(request.getParameter("price")) > 0){
+	                            
+	                    		//out.print(Integer.parseInt(request.getParameter("price"))+"hi");
+		                          rsCategory = pstmt3.executeQuery();
 
-                    pstmt.setString(1, request.getParameter("name"));
-                    pstmt.setString(2, request.getParameter("sku"));
-                    pstmt.setString(3, request.getParameter("category"));
-                    pstmt.setInt(4, Integer.parseInt(request.getParameter("price")));
-               
-
-                    int rowCount = pstmt.executeUpdate();
-
+	                    		if(rsCategory.next()){
+	   	                         int rowCount = pstmt.executeUpdate();
+	                    		} 
+	                    		else 
+	                    		{
+	                    			out.print("1Failure to insert new product. Click <a href=\"products.jsp\">here</a> to try again.");
+	                    		}
+	                    	}
+	                    	else
+	                    	{
+	                    		out.print("2Failure to insert new product. Click <a href=\"products.jsp\">here</a> to try again.");
+	                    	}
+	                    	
+	                         //int rowCount = pstmt.executeUpdate();
+	                    }
+	                    else
+	                    {
+	          				 out.print("3Failure to insert new product. Click <a href=\"products.jsp\">here</a> to try again.");
+	                    }
+						
+						
+                    }
+                    else
+                    {
+                    	out.print("4Failure to insert new product. Click <a href=\"products.jsp\">here</a> to try again.");
+                    }
                     // Commit transaction
                     conn.commit();
                     conn.setAutoCommit(true);
                     
-                 	// Begin transaction
-                    conn.setAutoCommit(false);
-
-                    // Create the prepared statement and use it to
-                    // UPDATE student values in the Students table.
-                    pstmt = conn
-                        .prepareStatement("UPDATE categories SET numProducts = numProducts + 1"
-                        					+ " WHERE category = ?");
-
-                    pstmt.setString(1, request.getParameter("category"));
-                    rowCount = pstmt.executeUpdate();
-
-                    // Commit transaction
-                    conn.commit();
-                    conn.setAutoCommit(true);
                 }
             %>
             
@@ -176,7 +211,21 @@
                     <th>&nbsp;</th>
                     <th><input value="" name="name" size="10"/></th>
                     <th><input value="" name="sku" size="15"/></th>
-                    <th><input value="" name="category" size="15"/></th>
+                    <th>
+                    	<!-- Start of dropdown for categories -->
+			        	  <select name="category">
+			        		<option value="">- Please Select -</option>
+			        		<%
+			        		Statement categoryStatement = conn.createStatement();
+                    		rsCategory = categoryStatement.executeQuery("select * from categories");
+			        		while(rsCategory.next()) {
+			        			out.print("<option value=\""+rsCategory.getString("name")+"\">"+rsCategory.getString("name")+"</option>");
+			        		}
+			        		%>
+			        		
+		        		  </select>
+            			<!-- End of dropdown -->
+            		</th>
                     <th><input value="" name="price" size="15"/></th>
                     <th><input type="submit" value="Insert"/></th>
                 </form>
@@ -194,17 +243,17 @@
                     <input type="hidden" name="sku" value="<%=rs.getString("sku")%>"/>
 				
 				<td></td>
-                <%-- Get the id --%>
-                <td>
-                    <%=rs.getString("sku")%>
-                </td>
 
-                <%-- Get the first name --%>
+                <%-- Get the name --%>
                 <td>
                     <input value="<%=rs.getString("name")%>" name="name" size="15"/>
                 </td>
-
-                <%-- Get the middle name --%>
+                
+                <%-- Get the sku --%>
+                <td>
+                    <%=rs.getString("sku")%>
+                </td>
+                <%-- Get the category --%>
                 <td>
                     <input value="<%=rs.getString("category")%>" name="category" size="15"/>
                 </td>

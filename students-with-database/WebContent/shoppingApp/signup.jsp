@@ -63,54 +63,7 @@
                 }
             %>
             
-            <%-- -------- UPDATE Code -------- --%>
-            <%
-                // Check if an update is requested
-//                 if (action != null && action.equals("update")) {
-
-//                     // Begin transaction
-//                     conn.setAutoCommit(false);
-
-//                     // Create the prepared statement and use it to
-//                     // UPDATE student values in the Students table.
-//                     pstmt = conn
-//                         .prepareStatement("UPDATE students SET pid = ?, first_name = ?, "
-//                             + "middle_name = ?, last_name = ? WHERE id = ?");
-
-//                     pstmt.setInt(1, Integer.parseInt(request.getParameter("pid")));
-//                     pstmt.setString(2, request.getParameter("first"));
-//                     pstmt.setString(3, request.getParameter("middle"));
-//                     pstmt.setString(4, request.getParameter("last"));
-//                     pstmt.setInt(5, Integer.parseInt(request.getParameter("id")));
-//                     int rowCount = pstmt.executeUpdate();
-
-//                     // Commit transaction
-//                     conn.commit();
-//                     conn.setAutoCommit(true);
-//                 }
-            %>
-            
-            <%-- -------- DELETE Code -------- --%>
-            <%
-                // Check if a delete is requested
-//                 if (action != null && action.equals("delete")) {
-
-//                     // Begin transaction
-//                     conn.setAutoCommit(false);
-
-//                     // Create the prepared statement and use it to
-//                     // DELETE students FROM the Students table.
-//                     pstmt = conn
-//                         .prepareStatement("DELETE FROM Students WHERE id = ?");
-
-//                     pstmt.setInt(1, Integer.parseInt(request.getParameter("id")));
-//                     int rowCount = pstmt.executeUpdate();
-
-//                     // Commit transaction
-//                     conn.commit();
-//                     conn.setAutoCommit(true);
-//                 }
-            %>
+           
 
             <%-- -------- SELECT Statement Code -------- --%>
             <%
