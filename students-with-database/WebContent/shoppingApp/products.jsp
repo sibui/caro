@@ -30,7 +30,7 @@
 	<tr>
  		<td valign="top">
         	<%-- -------- Include browser links HTML code -------- --%>
-            <jsp:include page="/browser.html" />
+            <jsp:include page="/menu.html" />
  		</td>
 	</tr>
 </table>
@@ -51,6 +51,8 @@
             PreparedStatement pstmt3 = null;
             ResultSet rs = null;
             ResultSet rsCategory = null;
+
+            
             
             
             try {
@@ -61,7 +63,26 @@
                 conn = DriverManager.getConnection(
                     "jdbc:postgresql://localhost/cse135?" +
                     "user=postgres&password=postgres");
+        		Statement categoryStatement1 = conn.createStatement();
             %>
+            
+            <% 
+          
+	          rsCategory = categoryStatement1.executeQuery("SELECT categories.name FROM categories");
+	      
+			%>
+			   <b>Links </b>
+			   <ul>
+				<%
+				while(rsCategory.next()){
+					out.print("<li><a href=\"products.jsp?search="+rsCategory.getString("name")+"\">"+rsCategory.getString("name")+"</a></li>");
+				}
+
+	
+	%>
+	
+	
+	</ul>
             
             <%-- -------- INSERT Code -------- --%>
             <%
@@ -189,10 +210,24 @@
             <%
                 // Create the statement
                 Statement statement = conn.createStatement();
-
+            
+            //get search variable
+            String search = request.getParameter("search");
+            
+            //if it's null, get ALL products
+            if(search == null)
+            {
+            	pstmt = conn.prepareStatement("SELECT * FROM products");
+            }
+            else //if not, specify which category
+            {
+            	pstmt = conn.prepareStatement("SELECT * FROM products where category = ?");
+            	pstmt.setString(1, request.getParameter("search"));
+            }
+           rs = pstmt.executeQuery();
                 // Use the created statement to SELECT
                 // the student attributes FROM the Student table.
-                rs = statement.executeQuery("SELECT * FROM products");
+           
             %>
             
             <!-- Add an HTML table header row to format the results -->
