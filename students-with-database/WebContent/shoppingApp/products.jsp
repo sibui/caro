@@ -239,7 +239,12 @@
             	isSearch = true;
             }
             
-            	pstmt = conn.prepareStatement("select * from products");
+            	
+            if(isSearch && search.equals(""))
+            {
+            	pstmt = conn.prepareStatement("select * from products where ");
+            }
+            pstmt = conn.prepareStatement("select * from products");
             
             
             
