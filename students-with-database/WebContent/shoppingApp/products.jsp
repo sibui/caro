@@ -25,15 +25,14 @@
     %>
     Welcome, <%=username%>!
     
-    
-<table>
-	<tr>
- 		<td valign="top">
-        	<%-- -------- Include browser links HTML code -------- --%>
-            <jsp:include page="/menu.html" />
- 		</td>
-	</tr>
-</table>
+ 	<table>
+		<tr>
+	 		<td valign="top">
+	        	<%-- -------- Include browser links HTML code -------- --%>
+	            <jsp:include page="/browser.html" />
+	 		</td>
+		</tr>
+	</table>
 
 
 <table>
@@ -49,6 +48,7 @@
             PreparedStatement pstmt = null;
             PreparedStatement pstmt2 = null;
             PreparedStatement pstmt3 = null;
+            PreparedStatement pstmt4 = null;
             ResultSet rs = null;
             ResultSet rsCategory = null;
 
@@ -71,7 +71,7 @@
 	          rsCategory = categoryStatement1.executeQuery("SELECT categories.name FROM categories");
 	      
 			%>
-			   <b>Links </b>
+			   <b>Categories </b>
 			   <ul>
 				<%
 				while(rsCategory.next()){
@@ -131,26 +131,26 @@
 	                    		} 
 	                    		else 
 	                    		{
-	                    			out.print("1Failure to insert new product. Click <a href=\"products.jsp\">here</a> to try again.");
+	                    			out.print("Failure to insert new product. Click <a href=\"products.jsp\">here</a> to try again.");
 	                    		}
 	                    	}
 	                    	else
 	                    	{
-	                    		out.print("2Failure to insert new product. Click <a href=\"products.jsp\">here</a> to try again.");
+	                    		out.print("Failure to insert new product. Click <a href=\"products.jsp\">here</a> to try again.");
 	                    	}
 	                    	
 	                         //int rowCount = pstmt.executeUpdate();
 	                    }
 	                    else
 	                    {
-	          				 out.print("3Failure to insert new product. Click <a href=\"products.jsp\">here</a> to try again.");
+	          				 out.print("Failure to insert new product. Click <a href=\"products.jsp\">here</a> to try again.");
 	                    }
 						
 						
                     }
                     else
                     {
-                    	out.print("4Failure to insert new product. Click <a href=\"products.jsp\">here</a> to try again.");
+                    	out.print("Failure to insert new product. Click <a href=\"products.jsp\">here</a> to try again.");
                     }
                     // Commit transaction
                     conn.commit();
@@ -171,13 +171,21 @@
                     // UPDATE student values in the Students table.
                     pstmt = conn
                         .prepareStatement("UPDATE products SET name = ?, category = ?,price= ? WHERE sku = ?");
-
-                    pstmt.setString(1, request.getParameter("name"));
-                    pstmt.setString(2, request.getParameter("sku"));
-                    pstmt.setString(3, request.getParameter("category"));
-                    pstmt.setInt(1, Integer.parseInt(request.getParameter("price")));
-                    int rowCount = pstmt.executeUpdate();
-
+					if (request.getParameter("name") != "" && request.getParameter("price") != "") {
+	                    pstmt.setString(1, request.getParameter("name"));
+	                    pstmt.setString(4, request.getParameter("sku"));
+	                    pstmt.setString(2, request.getParameter("category"));
+	                    pstmt.setInt(3, Integer.parseInt(request.getParameter("price")));
+	                    
+	                    pstmt4 = conn
+	                    	.prepareStatement("select * from products where sku = ?");
+	                    pstmt4.setString(1, request.getParameter("sku"));
+	                    
+	                    int rowCount = pstmt.executeUpdate();
+					}
+					else {
+						out.print("Failure to insert new product. Click <a href=\"products.jsp\">here</a> to try again.");
+					}
                     // Commit transaction
                     conn.commit();
                     conn.setAutoCommit(true);
@@ -290,7 +298,20 @@
                 </td>
                 <%-- Get the category --%>
                 <td>
-                    <input value="<%=rs.getString("category")%>" name="category" size="15"/>
+                    <!-- Start of dropdown for categories -->
+			        	  <select name="category">
+			        		<option value="<%=rs.getString("category")%>"><%=rs.getString("category")%></option>
+			        		<%
+			        		Statement categoryStatement2 = conn.createStatement();
+                    		String categoryDropdown = rs.getString("category");
+                    		rsCategory = categoryStatement2.executeQuery("select * from categories where categories.name <> '"+categoryDropdown+"'");
+			        		while(rsCategory.next()) {
+			        			out.print("<option value=\""+rsCategory.getString("name")+"\">"+rsCategory.getString("name")+"</option>");
+			        		}
+			        		%>
+			        		
+		        		  </select>
+            			<!-- End of dropdown -->
                 </td>
                
 				 <%-- Get the middle name --%>

@@ -8,7 +8,6 @@
         rsCategory = categoryStatement.executeQuery("SELECT categories.name FROM categories");
         
     %>
-    <b>Links </b>
 	<ul>
 	<!--  Links depends on whether their a customer or owner -->
 	<%
