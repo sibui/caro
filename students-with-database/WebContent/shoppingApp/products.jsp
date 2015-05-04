@@ -74,9 +74,17 @@
 			   <b>Categories </b>
 			   <ul>
 				<%
-				out.print("<li><a href=\"products.jsp?search=\"\">All Products</a></li>");
+	          
+	            String searchBar = request.getParameter("searchBar");
+	            if(searchBar == null)
+	            {
+	            	searchBar = "";
+	            }
+	            
+	            
+				out.print("<li><a href=\"products.jsp\">All Products</a></li>");
 				while(rsCategory.next()){
-					out.print("<li><a href=\"products.jsp?search="+rsCategory.getString("name")+"\">"+rsCategory.getString("name")+"</a></li>");
+					out.print("<li><a href=\"products.jsp?search="+rsCategory.getString("name")+"&searchBar="+searchBar+"\">"+rsCategory.getString("name")+"</a></li>");
 				}
 
 	
@@ -222,29 +230,46 @@
             
             //get search variable
             String search = request.getParameter("search");
+            
+            //search is for category links
             if(search == null)
             {	
             	search = "";
             }
-            String searchProduct = request.getParameter("searchProduct");
-            if(searchProduct == null)
+            searchBar = request.getParameter("searchBar");
+            if(searchBar == null)
             {
-            	searchProduct = "";
+            	searchBar = "";
             }
             
             boolean isSearch = false;
             //if it's null, get ALL products
-            if(search.equals(""))
+            if(!search.equals(""))
             {
             	isSearch = true;
             }
             
             	
-            if(isSearch && search.equals(""))
+            if(isSearch && searchBar.equals(""))
             {
-            	pstmt = conn.prepareStatement("select * from products where ");
+            	pstmt = conn.prepareStatement("select * from products where category = ?");
+            	pstmt.setString(1, search);
             }
-            pstmt = conn.prepareStatement("select * from products");
+            else if(isSearch && !searchBar.equals(""))
+            {
+            	pstmt = conn.prepareStatement("select * from products where category = ? and name = ?");
+            	pstmt.setString(1, search);
+            	pstmt.setString(2, searchBar);
+            }
+            else if(!isSearch && !searchBar.equals(""))
+            {
+            	pstmt = conn.prepareStatement("select * from products where name = ?");
+            	pstmt.setString(1, searchBar);
+            }
+            else
+            {
+            	pstmt = conn.prepareStatement("select * from products");
+            }
             
             
             
@@ -255,9 +280,12 @@
             %>
             <form action="products.jsp" method="GET">
             <b>Product Search:</b>
-            <input value="" name="searchProduct" size=10/>
+            <input value="" name="searchBar" size=10/>
+            <input value="<%=search%>" name="search" type="hidden" />
             <input type="submit" value="Search"/>
             </form>
+            <p>You searched for "<%=searchBar %>" product.</p>
+            <p>You searched for "<%=search %>" category.</p>
             <br>
             <!-- Add an HTML table header row to format the results -->
             <table border="1">
@@ -275,6 +303,8 @@
                     <th>&nbsp;</th>
                     <th><input value="" name="name" size="10"/></th>
                     <th><input value="" name="sku" size="15"/></th>
+                    <input type="hidden" name="search" value="<%=search%>"/>
+                    <input type="hidden" name="searchBar" value="<%=searchBar%>"/>
                     <th>
                     	<!-- Start of dropdown for categories -->
 			        	  <select name="category">
