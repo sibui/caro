@@ -9,19 +9,19 @@
 <body>
 	<!--  Precursor text that must appear in every webpage -->
 	 <%
-       String username = (String) application.getAttribute("username");
+     String username = (String) application.getAttribute("username");
 	   String usertype = (String) application.getAttribute("usertype");
-	   if(usertype.equals("customer")){
+	   if( usertype != null && !usertype.equals("owner"))
+	   {
 		   //redirect to another html page since 
 		   //you are a customer with no access to that page
 		   String redirectURL = "noaccess.html";
-           response.sendRedirect(redirectURL);
-		   
+         response.sendRedirect(redirectURL);
 	   }
-	   else if (username == null) {
-    	   String redirectURL = "login.jsp";
-           response.sendRedirect(redirectURL);
-       }
+	   else if (username == null || usertype == null ) {
+  	   String redirectURL = "login.jsp";
+         response.sendRedirect(redirectURL);
+     }
     %>
     Welcome, <%=username%>!
     
@@ -74,6 +74,7 @@
 			   <b>Categories </b>
 			   <ul>
 				<%
+				out.print("<li><a href=\"products.jsp?search=\"\">All Products</a></li>");
 				while(rsCategory.next()){
 					out.print("<li><a href=\"products.jsp?search="+rsCategory.getString("name")+"\">"+rsCategory.getString("name")+"</a></li>");
 				}
@@ -221,23 +222,38 @@
             
             //get search variable
             String search = request.getParameter("search");
-            
-            //if it's null, get ALL products
             if(search == null)
-            {
-            	pstmt = conn.prepareStatement("SELECT * FROM products");
+            {	
+            	search = "";
             }
-            else //if not, specify which category
+            String searchProduct = request.getParameter("searchProduct");
+            if(searchProduct == null)
             {
-            	pstmt = conn.prepareStatement("SELECT * FROM products where category = ?");
-            	pstmt.setString(1, request.getParameter("search"));
+            	searchProduct = "";
             }
+            
+            boolean isSearch = false;
+            //if it's null, get ALL products
+            if(search.equals(""))
+            {
+            	isSearch = true;
+            }
+            
+            	pstmt = conn.prepareStatement("select * from products");
+            
+            
+            
            rs = pstmt.executeQuery();
                 // Use the created statement to SELECT
                 // the student attributes FROM the Student table.
            
             %>
-            
+            <form action="products.jsp" method="GET">
+            <b>Product Search:</b>
+            <input value="" name="searchProduct" size=10/>
+            <input type="submit" value="Search"/>
+            </form>
+            <br>
             <!-- Add an HTML table header row to format the results -->
             <table border="1">
             <tr>
