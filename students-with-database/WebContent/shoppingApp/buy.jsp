@@ -41,6 +41,7 @@
             PreparedStatement pstmt3 = null;
             PreparedStatement pstmt4 = null;
             ResultSet rs = null;
+            ResultSet rs2 = null;
             ResultSet rsCategory = null;
 
             
@@ -68,29 +69,23 @@
 
                     // Create the prepared statement and use it to
                     // INSERT student values INTO the students table.
-                    if(request.getParameter("quantity") != "") 
-                    {    	
-	                    
-	                    pstmt = conn
-	                    .prepareStatement("INSERT INTO carts (owner, sku, quantity, price) VALUES (?, ?, ?, ?)");
-	
-	                    pstmt.setString(1, username);
-	                    pstmt.setString(2, request.getParameter("sku"));
-	                    pstmt.setInt(3, Integer.parseInt(request.getParameter("quantity")));
-	                    pstmt.setInt(4, Integer.parseInt(request.getParameter("price")));
-	               
-	
-	                    if( Integer.parseInt(request.getParameter("quantity")) > 0)
-	                    {
-	   	                    int rowCount = pstmt.executeUpdate();
-	   	      		   		//String redirectURL = "products_browsing.jsp";
-	   	 	      	 		//response.sendRedirect(redirectURL);
-	   	                    
-	                    } 
-	                    else 
-	                   	{
-	                    	out.print("<b>Please insert a valid value for quantity</b>");
-	                    }						
+                    if(request.getParameter("creditCard") != "") 
+                    {   
+                    	PreparedStatement pstmt5 = conn.prepareStatement("select * from carts where owner = ?");
+                    	pstmt5.setString(1, username);
+                    	rs2 = pstmt5.executeQuery();
+                    	while(rs2.next()) {
+		                    pstmt = conn
+		                    .prepareStatement("INSERT INTO purchases (ts, customer, sku, price, quantity) VALUES (CURRENT_TIMESTAMP, ?, ?, ?, ?)");
+		
+		                    pstmt.setString(1, username);
+		                    pstmt.setString(2, rs2.getString("sku"));
+		                    pstmt.setInt(4, rs2.getInt("quantity"));
+		                    pstmt.setInt(3, rs2.getInt("price"));
+		                    pstmt.executeUpdate();
+                    	}
+	                    String redirectURL = "confirmation.jsp";
+	                    response.sendRedirect(redirectURL);
                     }
                     else
                     {
