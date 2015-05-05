@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Copy element &apos;unsuccessful.html&apos; to &apos;home.jsp&apos;&#x0A;- Original project: &apos;students-with-database&apos;&#x0A;- Destination element: &apos;home.jsp&apos;&#x0A;- Original element: &apos;unsuccessful.html&apos;" description="Copy file" element1="WebContent/shoppingApp/unsuccessful.html" files="1" flags="589830" folders="0" id="org.eclipse.jdt.ui.copy" policy="org.eclipse.jdt.ui.copyResources" stamp="1430174205573" target="/students-with-database/WebContent/shoppingApp/home.jsp" units="0" version="1.0"/>
+</session>

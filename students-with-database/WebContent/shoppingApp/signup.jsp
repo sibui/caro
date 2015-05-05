@@ -18,6 +18,8 @@
             Connection conn = null;
             PreparedStatement pstmt = null;
             ResultSet rs = null;
+            PreparedStatement pstmt1 = null;
+            ResultSet rs1 = null;
             
             try {
                 // Registering Postgresql JDBC driver with the DriverManager
@@ -27,39 +29,85 @@
                 conn = DriverManager.getConnection(
                     "jdbc:postgresql://localhost/cse135?" +
                     "user=postgres&password=postgres");
+                
+             
             %>
             
             <%-- -------- INSERT Code -------- --%>
             <%
                 String action = request.getParameter("action");
                 // Check if an insertion is requested
-                if (action != null && action.equals("signup")) {
-
-                    // Begin transaction
-                    conn.setAutoCommit(false);
-
-                    // Create the prepared statement and use it to
-                    // INSERT user values INTO the users table.
-                    pstmt = conn
-                    .prepareStatement("INSERT INTO users (state, role, age, name) VALUES (?, ?, ?, ?)");
-
-                    pstmt.setString(4, request.getParameter("username"));
-                    pstmt.setString(2, request.getParameter("usertype"));
-                    pstmt.setString(3, request.getParameter("age"));
-                    pstmt.setString(1, request.getParameter("state"));
-                    int rowCount = pstmt.executeUpdate();
-
-                    // Commit transaction
-                    conn.commit();
-                    conn.setAutoCommit(true);
-                    String username = (String) request.getParameter("username");
-                    application.setAttribute("username", username);
-                    String usertype = (String) request.getParameter("usertype");
-                    application.setAttribute("usertype", usertype);
-                    String redirectURL = "home.jsp";
-                    response.sendRedirect(redirectURL);
-                 
-                  
+                if (action != null && action.equals("signup")) 
+                {
+				    if(request.getParameter("username") != "" && request.getParameter("usertype") != ""  && request.getParameter("age") != "" && request.getParameter("state") != "")
+				    {
+				    	
+				    	String age = request.getParameter("age");
+				    	int i = 0;
+				    	
+				    	boolean check = true;
+				    	
+				    	while(i < age.length()){ //checks for integer 
+				    		char letter = age.charAt(i);
+				    		int ascii = (int)letter;				    
+				    		i++;
+				    		if(ascii < 48 || ascii >= 58 ){ //invalid case - out of range
+				    			check = false;
+				    		}
+				    		
+				    	}
+				    	
+				    	
+				    	if(check)
+				    	{
+						    // Begin transaction
+		                    conn.setAutoCommit(false);
+		
+		                    // Create the prepared statement and use it to
+		                    // INSERT user values INTO the users table.
+		                    pstmt = conn
+		                    .prepareStatement("INSERT INTO users (state, role, age, name) VALUES (?, ?, ?, ?)");
+		
+		                    pstmt.setString(4, request.getParameter("username"));
+		                    pstmt.setString(2, request.getParameter("usertype"));
+		                    pstmt.setInt(3, Integer.parseInt(request.getParameter("age")));
+		                    pstmt.setString(1, request.getParameter("state"));
+		  
+		                    pstmt1 = conn.prepareStatement("select * from users where name = ?");
+		                    pstmt1.setString(1, request.getParameter("name"));
+		                    rs1 = pstmt1.executeQuery();
+		                    
+		                    if(!rs1.next()) //checks for name 
+		                    {
+		                    	int rowCount = pstmt.executeUpdate();
+		                    	String username = (String) request.getParameter("username");
+			                    application.setAttribute("username", username);
+			                    String usertype = (String) request.getParameter("usertype");
+			                    application.setAttribute("usertype", usertype);
+			                    String redirectURL = "home.jsp";
+			                    response.sendRedirect(redirectURL);
+		                    }
+		                    
+		
+		                    // Commit transaction
+		                    conn.commit();
+		                    conn.setAutoCommit(true);
+		                    
+		                    //Check 
+		                    
+		                    
+				    	}
+				    	else
+				    	{
+				    		 String redirectURL = "unsuccessful.html";
+			                 response.sendRedirect(redirectURL);
+				    	}
+				    }	    
+				    else
+				    {
+				    	 String redirectURL = "unsuccessful.html";
+		                 response.sendRedirect(redirectURL);	
+				    }
                 }
             %>
             
@@ -198,12 +246,14 @@
                 // Close the Connection
                 conn.close();
             } catch (SQLException e) {
-            	String redirectURL = "unsuccessful.html";
-                response.sendRedirect(redirectURL);
+            	
                 // Wrap the SQL exception in a runtime exception to propagate
                 // it upwards
                 
                 //throw new RuntimeException(e);
+                
+            	String redirectURL = "unsuccessful.html";
+                response.sendRedirect(redirectURL);
             }
             finally {
                 // Release resources in a finally block in reverse-order of
@@ -224,7 +274,11 @@
                 if (conn != null) {
                     try {
                         conn.close();
-                    } catch (SQLException e) { } // Ignore
+                    } catch (SQLException e) { 
+                    	
+                    	
+                    	
+                    } // Ignore
                     conn = null;
                 }
             }

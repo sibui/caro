@@ -18,6 +18,8 @@
             Connection conn = null;
             PreparedStatement pstmt = null;
             ResultSet rs = null;
+            PreparedStatement pstmt1 = null;
+            ResultSet rs1 = null;
             
             try {
                 // Registering Postgresql JDBC driver with the DriverManager
@@ -25,84 +27,91 @@
 
                 // Open a connection to the database using DriverManager
                 conn = DriverManager.getConnection(
-                    "jdbc:postgresql://localhost/postgres?" +
+                    "jdbc:postgresql://localhost/cse135?" +
                     "user=postgres&password=postgres");
+                
+             
             %>
             
             <%-- -------- INSERT Code -------- --%>
             <%
                 String action = request.getParameter("action");
                 // Check if an insertion is requested
-                if (action != null && action.equals("signup")) {
-
-                    // Begin transaction
-                    conn.setAutoCommit(false);
-
-                    // Create the prepared statement and use it to
-                    // INSERT user values INTO the users table.
-                    pstmt = conn
-                    .prepareStatement("INSERT INTO users (state, role, age, name) VALUES (?, ?, ?, ?)");
-
-                    pstmt.setInt(1, Integer.parseInt(request.getParameter("username")));
-                    pstmt.setString(2, request.getParameter("usertype"));
-                    pstmt.setString(3, request.getParameter("age"));
-                    pstmt.setString(4, request.getParameter("state"));
-                    int rowCount = pstmt.executeUpdate();
-
-                    // Commit transaction
-                    conn.commit();
-                    conn.setAutoCommit(true);
+                if (action != null && action.equals("signup")) 
+                {
+				    if(request.getParameter("username") != "" && request.getParameter("usertype") != ""  && request.getParameter("age") != "" && request.getParameter("state") != "")
+				    {
+				    	
+				    	String age = request.getParameter("age");
+				    	int i = 0;
+				    	
+				    	boolean check = true;
+				    	
+				    	while(i < age.length()){ //checks for integer 
+				    		char letter = age.charAt(i);
+				    		int ascii = (int)letter;				    
+				    		i++;
+				    		if(ascii < 48 || ascii >= 58 ){ //invalid case - out of range
+				    			check = false;
+				    		}
+				    		
+				    	}
+				    	
+				    	
+				    	if(check)
+				    	{
+						    // Begin transaction
+		                    conn.setAutoCommit(false);
+		
+		                    // Create the prepared statement and use it to
+		                    // INSERT user values INTO the users table.
+		                    pstmt = conn
+		                    .prepareStatement("INSERT INTO users (state, role, age, name) VALUES (?, ?, ?, ?)");
+		
+		                    pstmt.setString(4, request.getParameter("username"));
+		                    pstmt.setString(2, request.getParameter("usertype"));
+		                    pstmt.setInt(3, Integer.parseInt(request.getParameter("age")));
+		                    pstmt.setString(1, request.getParameter("state"));
+		  
+		                    pstmt1 = conn.prepareStatement("select * from users where name = ?");
+		                    pstmt1.setString(1, request.getParameter("name"));
+		                    rs1 = pstmt1.executeQuery();
+		                    
+		                    if(!rs1.next()) //checks for name 
+		                    {
+		                    	int rowCount = pstmt.executeUpdate();
+		                    	String username = (String) request.getParameter("username");
+			                    application.setAttribute("username", username);
+			                    String usertype = (String) request.getParameter("usertype");
+			                    application.setAttribute("usertype", usertype);
+			                    String redirectURL = "home.jsp";
+			                    response.sendRedirect(redirectURL);
+		                    }
+		                    
+		
+		                    // Commit transaction
+		                    conn.commit();
+		                    conn.setAutoCommit(true);
+		                    
+		                    //Check 
+		                    
+		                    
+				    	}
+				    	else
+				    	{
+				    		 String redirectURL = "unsuccessful.html";
+			                 response.sendRedirect(redirectURL);
+				    	}
+				    }	    
+				    else
+				    {
+				    	 String redirectURL = "unsuccessful.html";
+		                 response.sendRedirect(redirectURL);	
+				    }
                 }
             %>
             
-            <%-- -------- UPDATE Code -------- --%>
-            <%
-                // Check if an update is requested
-//                 if (action != null && action.equals("update")) {
-
-//                     // Begin transaction
-//                     conn.setAutoCommit(false);
-
-//                     // Create the prepared statement and use it to
-//                     // UPDATE student values in the Students table.
-//                     pstmt = conn
-//                         .prepareStatement("UPDATE students SET pid = ?, first_name = ?, "
-//                             + "middle_name = ?, last_name = ? WHERE id = ?");
-
-//                     pstmt.setInt(1, Integer.parseInt(request.getParameter("pid")));
-//                     pstmt.setString(2, request.getParameter("first"));
-//                     pstmt.setString(3, request.getParameter("middle"));
-//                     pstmt.setString(4, request.getParameter("last"));
-//                     pstmt.setInt(5, Integer.parseInt(request.getParameter("id")));
-//                     int rowCount = pstmt.executeUpdate();
-
-//                     // Commit transaction
-//                     conn.commit();
-//                     conn.setAutoCommit(true);
-//                 }
-            %>
-            
-            <%-- -------- DELETE Code -------- --%>
-            <%
-                // Check if a delete is requested
-//                 if (action != null && action.equals("delete")) {
-
-//                     // Begin transaction
-//                     conn.setAutoCommit(false);
-
-//                     // Create the prepared statement and use it to
-//                     // DELETE students FROM the Students table.
-//                     pstmt = conn
-//                         .prepareStatement("DELETE FROM Students WHERE id = ?");
-
-//                     pstmt.setInt(1, Integer.parseInt(request.getParameter("id")));
-//                     int rowCount = pstmt.executeUpdate();
-
-//                     // Commit transaction
-//                     conn.commit();
-//                     conn.setAutoCommit(true);
-//                 }
-            %>
+           
 
             <%-- -------- SELECT Statement Code -------- --%>
             <%
@@ -115,18 +124,68 @@
             %>
             
             <table border="1">
-            <form action="shoppingApp/signup.jsp" method="POST">
+            <form action="signup.jsp" method="POST">
 	            Username: <input type="text" name="username">
-	        	<select>
+	        	<select name="usertype">
 	        		<option value="owner" name="usertype">Owner</option>
 	        		<option value="customer" name="usertype">Customer</option>
 	        	</select>
-	        	
+	        	<input type="hidden" name="action" value="signup"/>
 	        	Age: <input type="text" name="age">
 	        	
-	        	<select>
-	        		<option name="state" value="ca">CA</option>
-	        		<option name="state" value="nv">NV</option>
+	        	<select name="state">
+	        		<option value="">- Please Select -</option>
+	        		<option value="AL">Alabama</option>
+					<option value="AK">Alaska</option>
+					<option value="AZ">Arizona</option>
+					<option value="AR">Arkansas</option>
+					<option value="CA">California</option>
+					<option value="CO">Colorado</option>
+					<option value="CT">Connecticut</option>
+					<option value="DE">Delaware</option>
+					<option value="DC">District Of Columbia</option>
+					<option value="FL">Florida</option>
+					<option value="GA">Georgia</option>
+					<option value="HI">Hawaii</option>
+					<option value="ID">Idaho</option>
+					<option value="IL">Illinois</option>
+					<option value="IN">Indiana</option>
+					<option value="IA">Iowa</option>
+					<option value="KS">Kansas</option>
+					<option value="KY">Kentucky</option>
+					<option value="LA">Louisiana</option>
+					<option value="ME">Maine</option>
+					<option value="MD">Maryland</option>
+					<option value="MA">Massachusetts</option>
+					<option value="MI">Michigan</option>
+					<option value="MN">Minnesota</option>
+					<option value="MS">Mississippi</option>
+					<option value="MO">Missouri</option>
+					<option value="MT">Montana</option>
+					<option value="NE">Nebraska</option>
+					<option value="NV">Nevada</option>
+					<option value="NH">New Hampshire</option>
+					<option value="NJ">New Jersey</option>
+					<option value="NM">New Mexico</option>
+					<option value="NY">New York</option>
+					<option value="NC">North Carolina</option>
+					<option value="ND">North Dakota</option>
+					<option value="OH">Ohio</option>
+					<option value="OK">Oklahoma</option>
+					<option value="OR">Oregon</option>
+					<option value="PA">Pennsylvania</option>
+					<option value="RI">Rhode Island</option>
+					<option value="SC">South Carolina</option>
+					<option value="SD">South Dakota</option>
+					<option value="TN">Tennessee</option>
+					<option value="TX">Texas</option>
+					<option value="UT">Utah</option>
+					<option value="VT">Vermont</option>
+					<option value="VA">Virginia</option>
+					<option value="WA">Washington</option>
+					<option value="WV">West Virginia</option>
+					<option value="WI">Wisconsin</option>
+					<option value="WY">Wyoming</option>
 	        	</select>
 	        	<td><input type="submit" value="signup"></td>
             </form>
@@ -138,38 +197,31 @@
             %>
 
             <tr>
-                <form action="attempt3/students.jsp" method="POST">
-                    <input type="hidden" name="action" value="update"/>
-                    <input type="hidden" name="id" value="<%=rs.getInt("id")%>"/>
-
-                Get the id
+                
                 <td>
                     <%=rs.getInt("id")%>
                 </td>
 
-                Get the pid
+                
                 <td>
-                    <input value="<%=rs.getString("state")%>" name="state" size="15"/>
+                    <%=rs.getString("state")%>
                 </td>
 
-                Get the first name
+                
                 <td>
-                    <input value="<%=rs.getString("role")%>" name="role" size="15"/>
+                    <%=rs.getString("role")%>
                 </td>
 
-                Get the middle name
+                
                 <td>
-                    <input value="<%=rs.getInt("age")%>" name="age" size="15"/>
+                    <%=rs.getInt("age")%>
                 </td>
 
-                Get the last name
+                
                 <td>
-                    <input value="<%=rs.getString("name")%>" name="name" size="15"/>
+                    <%=rs.getString("name")%>
                 </td>
 
-                Button
-                <td><input type="submit" value="Update"></td>
-                </form>
                 <!--  
                 <form action="attempt3/students.jsp" method="POST">
                     <input type="hidden" name="action" value="delete"/>
@@ -194,10 +246,14 @@
                 // Close the Connection
                 conn.close();
             } catch (SQLException e) {
-
+            	
                 // Wrap the SQL exception in a runtime exception to propagate
                 // it upwards
-                throw new RuntimeException(e);
+                
+                //throw new RuntimeException(e);
+                
+            	String redirectURL = "unsuccessful.html";
+                response.sendRedirect(redirectURL);
             }
             finally {
                 // Release resources in a finally block in reverse-order of
@@ -218,7 +274,11 @@
                 if (conn != null) {
                     try {
                         conn.close();
-                    } catch (SQLException e) { } // Ignore
+                    } catch (SQLException e) { 
+                    	
+                    	
+                    	
+                    } // Ignore
                     conn = null;
                 }
             }
