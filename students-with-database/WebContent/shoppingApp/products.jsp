@@ -257,7 +257,7 @@
             }
             else if(isSearch && !searchBar.equals(""))
             {
-            	pstmt = conn.prepareStatement("select * from products where category = ? and name = ?");
+            	pstmt = conn.prepareStatement("select * from products where category = ? and name like ?");
             	pstmt.setString(1, search);
             	pstmt.setString(2, searchBar);
             }

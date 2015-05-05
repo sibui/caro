@@ -38,3 +38,12 @@ price INTEGER
 );
 
 INSERT INTO products(name, sku, category, price) values ('testname', 'test008', 'tacos', 0);
+
+CREATE TABLE carts (
+owner TEXT NOT NULL CHECK (char_length(owner) > 0),
+sku TEXT NOT NULL CHECK (char_length(sku) > 0),
+quantity INTEGER,
+price INTEGER
+);
+
+INSERT INTO carts(owner, sku, quantity, price) values ('simon', 'test008', '1', 0);

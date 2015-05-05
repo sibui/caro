@@ -11,6 +11,7 @@
 	 <%
      String username = (String) application.getAttribute("username");
 	   String usertype = (String) application.getAttribute("usertype");
+
 	   if( usertype != null && !usertype.equals("owner"))
 	   {
 		   //redirect to another html page since 
@@ -119,12 +120,12 @@
             {
             	pstmt = conn.prepareStatement("select * from products where category = ? and name = ?");
             	pstmt.setString(1, search);
-            	pstmt.setString(2, searchBar);
+            	pstmt.setString(2, "%"+searchBar+"%");
             }
             else if(!isSearch && !searchBar.equals(""))
             {
             	pstmt = conn.prepareStatement("select * from products where name = ?");
-            	pstmt.setString(1, searchBar);
+            	pstmt.setString(1, "%"+searchBar+"%");
             }
             else
             {
@@ -163,10 +164,6 @@
                 while (rs.next()) {
                 	%>
                 	<tr>
-                    <form action="products_browsing.jsp" method="POST">
-                        <input type="hidden" name="action" value="update"/>
-                        <input type="hidden" name="sku" value="<%=rs.getString("sku")%>"/>
-    				
     				<td></td>
 
                     <%-- Get the name --%>
