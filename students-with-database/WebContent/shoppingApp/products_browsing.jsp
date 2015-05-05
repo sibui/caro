@@ -9,20 +9,13 @@
 <body>
 	<!--  Precursor text that must appear in every webpage -->
 	 <%
-     String username = (String) application.getAttribute("username");
-	   String usertype = (String) application.getAttribute("usertype");
-
-	   if( usertype != null && !usertype.equals("owner"))
-	   {
-		   //redirect to another html page since 
-		   //you are a customer with no access to that page
-		   String redirectURL = "noaccess.html";
-         response.sendRedirect(redirectURL);
-	   }
-	   else if (username == null || usertype == null ) {
-  	   String redirectURL = "login.jsp";
-         response.sendRedirect(redirectURL);
-     }
+	     String username = (String) application.getAttribute("username");
+		 String usertype = (String) application.getAttribute("usertype");
+	
+		 if (username == null || usertype == null ) {
+		  	 String redirectURL = "login.jsp";
+		     response.sendRedirect(redirectURL);
+	     }
     %>
     Welcome, <%=username%>!
 
@@ -118,13 +111,13 @@
             }
             else if(isSearch && !searchBar.equals(""))
             {
-            	pstmt = conn.prepareStatement("select * from products where category = ? and name = ?");
+            	pstmt = conn.prepareStatement("select * from products where category = ? and name like ?");
             	pstmt.setString(1, search);
             	pstmt.setString(2, "%"+searchBar+"%");
             }
             else if(!isSearch && !searchBar.equals(""))
             {
-            	pstmt = conn.prepareStatement("select * from products where name = ?");
+            	pstmt = conn.prepareStatement("select * from products where name like ?");
             	pstmt.setString(1, "%"+searchBar+"%");
             }
             else

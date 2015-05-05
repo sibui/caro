@@ -24,7 +24,7 @@
 	       response.sendRedirect(redirectURL);   
 	   }
 	   
-	   if( usertype != null && !usertype.equals("owner"))
+	   if( usertype != null && !usertype.equals("customer"))
 	   {
 		   //redirect to another html page since 
 		   //you are a customer with no access to that page
