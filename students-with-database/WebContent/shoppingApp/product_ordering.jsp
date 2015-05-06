@@ -54,6 +54,7 @@
             PreparedStatement pstmt4 = null;
             ResultSet rs = null;
             ResultSet rsCategory = null;
+            ResultSet rsCategory1 = null;
 
             
             
@@ -161,7 +162,14 @@
                     </td>
                     <%-- Get the category --%>
                     <td>
-                        <%=rs.getString("category")%>
+                        <%
+                        pstmt4 = conn.prepareStatement("select * from categories where id = ?");
+                        pstmt4.setInt(1, rs.getInt("category"));
+                        rsCategory1 = pstmt4.executeQuery();
+                        rsCategory1.next();
+                        String category = rsCategory1.getString("name");
+                        %>
+                        <%=category%>
                     </td>
                    
     				 <%-- Get the middle name --%>

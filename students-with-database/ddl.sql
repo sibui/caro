@@ -1,18 +1,4 @@
-CREATE TABLE students (
-    id          SERIAL PRIMARY KEY,
-    pid         INTEGER,
-    first_name  TEXT,
-    middle_name TEXT,
-    last_name   TEXT
-);
-
-INSERT INTO students (pid, first_name, middle_name, last_name) values (77777777, 'Mary', '', 'Doe');
-INSERT INTO students (pid, first_name, middle_name, last_name) values (88888888, 'John', 'T', 'Smith');
-INSERT INTO students (pid, first_name, middle_name, last_name) values (11111111, 'S', 'B', 'B');
-
-
 CREATE TABLE users (
-id SERIAL PRIMARY KEY,
 state TEXT NOT NULL CHECK (char_length(state) > 0), 
 role TEXT NOT NULL CHECK (char_length(role) > 0), 
 age TEXT NOT NULL CHECK (char_length(age) > 0), 
@@ -49,8 +35,8 @@ INSERT INTO carts(owner, sku, quantity, price) values ('simon', 'test008', 1, 5)
 
 CREATE TABLE purchases (
 ts timestamp,
-customer TEXT NOT NULL CHECK (char_length(customer) > 0) references users(name),
-sku TEXT NOT NULL CHECK (char_length(sku) > 0) references products(sku),
+customer TEXT NOT NULL CHECK (char_length(customer) > 0),
+sku TEXT NOT NULL CHECK (char_length(sku) > 0),
 price INTEGER,
 quantity INTEGER
 );
