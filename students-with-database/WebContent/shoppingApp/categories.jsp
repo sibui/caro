@@ -95,10 +95,11 @@
                     // Create the prepared statement and use it to
                     // UPDATE student values in the Students table.
                     pstmt = conn
-                        .prepareStatement("UPDATE categories SET description = ?, name = ?");
+                        .prepareStatement("UPDATE categories SET description = ?, name = ? where id = ? ");
 
                     pstmt.setString(1, request.getParameter("description"));
                     pstmt.setString(2, request.getParameter("name"));
+                    pstmt.setInt(3, Integer.parseInt(request.getParameter("id")));
                     int rowCount = pstmt.executeUpdate();
 
                     // Commit transaction
@@ -152,19 +153,18 @@
 
                 // Use the created statement to SELECT
                 // the student attributes FROM the Student table.
-                rs = statement.executeQuery("select categories.name, categories.description, count(products.name) as numProduct " +
+                rs = statement.executeQuery("select categories.id, categories.name, categories.description, count(products.name) as numProduct " +
                 		"from categories LEFT JOIN products ON categories.id = products.category " +
-                		"group by categories.name, categories.description");
+                		"group by categories.id, categories.name, categories.description");
                 //rs = statement.executeQuery("select * from products");
             %>
             
             <!-- Add an HTML table header row to format the results -->
             <table border="1">
             <tr>
-                <th>ID</th>
+                <th></th>
                 <th>Category Name</th>
                 <th>Description</th>
-                <th>Num of products</th>
             </tr>
 
             <tr>
@@ -186,29 +186,23 @@
             <tr>
                 <form action="categories.jsp" method="POST">
                     <input type="hidden" name="action" value="update"/>
-<%--                     <input type="hidden" name="id" value="<%=rs.getInt("id")%>"/> --%>
+                   
 
-                <%-- Get the id --%>
+                <%-- Id --%>
                 <td>
+                 <input type="hidden" name="id" value="<%=rs.getInt("id")%>"/>
                 </td>
 
-                <%-- Get the first name --%>
+                <%-- Get the name --%>
                 <td>
                     <input value="<%=rs.getString("name")%>" name="name" size="15"/>
                 </td>
 
-                <%-- Get the middle name --%>
+                <%-- Get the description --%>
                 <td>
                     <input value="<%=rs.getString("description")%>" name="description" size="15"/>
                 </td>
                
-				 <%-- Get the middle name --%>
-                <td>
-                    <input value="<%=rs.getInt("numProduct")%>" name="description" size="15"/>
-                </td>
-               
-				
-
 
                 <%-- Button --%>
                  

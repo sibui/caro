@@ -85,7 +85,7 @@
 			                    application.setAttribute("username", username);
 			                    String usertype = (String) request.getParameter("usertype");
 			                    application.setAttribute("usertype", usertype);
-			                    String redirectURL = "home.jsp";
+			                    String redirectURL = "successful.html";
 			                    response.sendRedirect(redirectURL);
 		                    }
 		                    
@@ -190,52 +190,6 @@
 	        	</select>
 	        	<td><input type="submit" value="signup"></td>
             </form>
-
-            <%-- -------- Iteration Code -------- --%>
-            <%
-                // Iterate over the ResultSet
-                while (rs.next()) {
-            %>
-
-            <tr>
-                
-                <td>
-                    <%=rs.getInt("id")%>
-                </td>
-
-                
-                <td>
-                    <%=rs.getString("state")%>
-                </td>
-
-                
-                <td>
-                    <%=rs.getString("role")%>
-                </td>
-
-                
-                <td>
-                    <%=rs.getInt("age")%>
-                </td>
-
-                
-                <td>
-                    <%=rs.getString("name")%>
-                </td>
-
-                <!--  
-                <form action="attempt3/students.jsp" method="POST">
-                    <input type="hidden" name="action" value="delete"/>
-                    <input type="hidden" value="<%=rs.getInt("id")%>" name="id"/>
-                    Button
-                <td><input type="submit" value="Delete"/></td>
-                </form>-->
-            </tr>
-
-            <%
-                }
-            %>
-
             <%-- -------- Close Connection Code -------- --%>
             <%
                 // Close the ResultSet

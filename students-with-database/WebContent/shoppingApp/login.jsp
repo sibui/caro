@@ -81,7 +81,7 @@
 				
 					
             		//outputs that its an incorrect username
-					 out.print(username + " not known. Please use a correct username in textbox.");
+					 out.print("The provided name "+ username + " is not known. Please use a correct username in textbox.");
 					 
             
 				  }

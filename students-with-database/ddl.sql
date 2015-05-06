@@ -9,7 +9,7 @@ INSERT INTO users (state, role, age, name) values ('CA', 'owner', '99', 'simon')
 
 CREATE TABLE categories (
 id SERIAL PRIMARY KEY,
-description TEXT,
+description TEXT NOT NULL CHECK (char_length(description) > 0),
 name TEXT UNIQUE NOT NULL CHECK (char_length(name) > 0)
 );
 

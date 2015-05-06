@@ -7,6 +7,7 @@
 <title>Product Ordering</title>
 </head>
 <body>
+<h2>Product Ordering</h2>
 	<%
      String username = (String) application.getAttribute("username");
 	 String usertype = (String) application.getAttribute("usertype");
@@ -24,17 +25,10 @@
 	       response.sendRedirect(redirectURL);   
 	   }
 	   
-	   if( usertype != null && !usertype.equals("customer"))
-	   {
-		   //redirect to another html page since 
-		   //you are a customer with no access to that page
-		   String redirectURL = "noaccess.html";
-         response.sendRedirect(redirectURL);
-	   }
-	   else if (username == null || usertype == null ) {
-  	   String redirectURL = "login.jsp";
-         response.sendRedirect(redirectURL);
-     }
+	   if (username == null || usertype == null ) {
+  	   	   String redirectURL = "login.jsp";
+           response.sendRedirect(redirectURL);
+       }
     %>
     Welcome, <%=username%>!
     
@@ -89,21 +83,44 @@
 	
 	                    pstmt.setString(1, username);
 	                    pstmt.setString(2, request.getParameter("sku"));
-	                    pstmt.setInt(3, Integer.parseInt(request.getParameter("quantity")));
 	                    pstmt.setInt(4, Integer.parseInt(request.getParameter("price")));
-	               
-	
-	                    if( Integer.parseInt(request.getParameter("quantity")) > 0)
-	                    {
-	   	                    int rowCount = pstmt.executeUpdate();
-	   	      		   		//String redirectURL = "products_browsing.jsp";
-	   	 	      	 		//response.sendRedirect(redirectURL);
-	   	                    
-	                    } 
-	                    else 
-	                   	{
-	                    	out.print("<b>Please insert a valid value for quantity</b>");
-	                    }						
+	                    
+	                    String quantity = request.getParameter("quantity");
+						int i = 0;
+				    	boolean check = true;
+				    	
+				    	while(i < quantity.length()){ //checks for integer
+				    		//new letter
+				    		char letter = quantity.charAt(i);
+				    		int ascii = (int)letter;				    
+				    		i++;
+				    		if(ascii < 48 || ascii >= 58 ){ //invalid case - out of range
+				    			check = false;
+				    		}
+				    		
+				    	}
+				    	
+				    	
+				    	if(check)
+				    	{
+		                    if( Integer.parseInt(request.getParameter("quantity")) > 0)
+		                    {
+			                    pstmt.setInt(3, Integer.parseInt(request.getParameter("quantity")));
+
+		   	                    int rowCount = pstmt.executeUpdate();
+		   	      		   		String redirectURL = "products_browsing.jsp";
+		   	 	      	 		response.sendRedirect(redirectURL);
+		   	                    
+		                    } 
+		                    else 
+		                   	{
+		                    	out.print("<b>Please insert a valid value for quantity</b>");
+		                    }	
+				    	}
+				    	else
+				    	{
+				    		out.print("<b>Please insert a valid value for quantity</b>");
+				    	}
                     }
                     else
                     {

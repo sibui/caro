@@ -7,6 +7,7 @@
 <title>Products</title>
 </head>
 <body>
+<h2>Products</h2>
 	<!--  Precursor text that must appear in every webpage -->
 	 <%
      String username = (String) application.getAttribute("username");
@@ -138,7 +139,14 @@
 		                          rsCategory = pstmt3.executeQuery();
 
 	                    		if(rsCategory.next()){
-	   	                         int rowCount = pstmt.executeUpdate();
+	   	                        	int rowCount = pstmt.executeUpdate();
+	   	         		            PreparedStatement pstmt10 = null;
+	   	         		           	ResultSet rsCategoryName = null;
+	   	         	            	pstmt10 = conn.prepareStatement("select * from categories where id = ?");
+	   	                     		pstmt10.setInt(1, Integer.parseInt(request.getParameter("category")));
+	   	                     		rsCategoryName = pstmt10.executeQuery();
+	   	                     		rsCategoryName.next();
+	   	                        	out.print("Successfully added name: "+request.getParameter("name")+" with sku: "+request.getParameter("sku")+" in category: "+rsCategoryName.getString("name")+" with price: "+request.getParameter("price"));
 	                    		} 
 	                    		else 
 	                    		{
@@ -298,7 +306,22 @@
             <input type="submit" value="Search"/>
             </form>
             <p>You searched for "<%=searchBar %>" product.</p>
-            <p>You searched for "<%=search %>" category.</p>
+            <%
+            	String categorySearch = "";
+            	if (!search.equals("")) {
+		            PreparedStatement pstmt10 = null;
+		           	ResultSet rsCategoryName = null;
+	            	pstmt10 = conn.prepareStatement("select * from categories where id = ?");
+            		pstmt10.setInt(1, Integer.parseInt(search));
+            		rsCategoryName = pstmt10.executeQuery();
+            		
+            		
+            		if (rsCategoryName.next()) {
+            			categorySearch = rsCategoryName.getString("name");
+            		}
+            	}
+            %>
+            <p>You searched for "<%=categorySearch %>" category.</p>
             <br>
             <!-- Add an HTML table header row to format the results -->
             <table border="1">

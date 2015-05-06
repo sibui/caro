@@ -7,22 +7,16 @@
 <title>Product Ordering</title>
 </head>
 <body>
+<h2>Shopping Cart</h2>
 	<%
      String username = (String) application.getAttribute("username");
 	 String usertype = (String) application.getAttribute("usertype");
 	   
 	   
-	   if( usertype != null && !usertype.equals("customer"))
-	   {
-		   //redirect to another html page since 
-		   //you are a customer with no access to that page
-		   String redirectURL = "noaccess.html";
-         response.sendRedirect(redirectURL);
+	   if (username == null || usertype == null ) {
+	 	  String redirectURL = "login.jsp";
+	      response.sendRedirect(redirectURL);
 	   }
-	   else if (username == null || usertype == null ) {
-  	   String redirectURL = "login.jsp";
-         response.sendRedirect(redirectURL);
-     }
     %>
     Welcome, <%=username%>!
     

@@ -7,6 +7,7 @@
 <title>Products</title>
 </head>
 <body>
+<h2>Products Browsing</h2>
 	<!--  Precursor text that must appear in every webpage -->
 	 <%
 	     String username = (String) application.getAttribute("username");
@@ -18,6 +19,15 @@
 	     }
     %>
     Welcome, <%=username%>!
+    
+    <table>
+	<tr>
+ 		<td valign="top">
+        	<%-- -------- Include browser links HTML code -------- --%>
+            <jsp:include page="/browser.html" />
+ 		</td>
+	</tr>
+	</table>
 
 <table>
     <tr>
