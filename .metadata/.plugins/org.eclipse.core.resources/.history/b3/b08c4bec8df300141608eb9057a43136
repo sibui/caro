@@ -47,8 +47,7 @@
 				    	
 				    	boolean check = true;
 				    	
-				    	while(i < age.length()){ //checks for integer
-				    		//new letter
+				    	while(i < age.length()){ //checks for integer 
 				    		char letter = age.charAt(i);
 				    		int ascii = (int)letter;				    
 				    		i++;
