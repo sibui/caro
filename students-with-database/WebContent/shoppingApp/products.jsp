@@ -49,8 +49,10 @@
             PreparedStatement pstmt2 = null;
             PreparedStatement pstmt3 = null;
             PreparedStatement pstmt4 = null;
+            PreparedStatement pstmt6 = null;
             ResultSet rs = null;
             ResultSet rsCategory = null;
+            ResultSet rsCart = null;
 
             
             
@@ -68,7 +70,7 @@
             
             <% 
           
-	          rsCategory = categoryStatement1.executeQuery("SELECT categories.name FROM categories");
+	          rsCategory = categoryStatement1.executeQuery("SELECT * FROM categories");
 	      
 			%>
 			   <b>Categories </b>
@@ -84,7 +86,7 @@
 	            
 				out.print("<li><a href=\"products.jsp\">All Products</a></li>");
 				while(rsCategory.next()){
-					out.print("<li><a href=\"products.jsp?search="+rsCategory.getString("name")+"&searchBar="+searchBar+"\">"+rsCategory.getString("name")+"</a></li>");
+					out.print("<li><a href=\"products.jsp?search="+rsCategory.getInt("id")+"&searchBar="+searchBar+"\">"+rsCategory.getString("name")+"</a></li>");
 				}
 
 	
@@ -112,7 +114,7 @@
 	
 	                    pstmt.setString(1, request.getParameter("name"));
 	                    pstmt.setString(2, request.getParameter("sku"));
-	                    pstmt.setString(3, request.getParameter("category"));
+	                    pstmt.setInt(3, Integer.parseInt(request.getParameter("category")));
 	                    pstmt.setInt(4, Integer.parseInt(request.getParameter("price")));
 	               
 	
@@ -124,8 +126,8 @@
 	                    rs = pstmt2.executeQuery();
 	                    
 	                    //check to see if category is a non-category
-	                    pstmt3 = conn.prepareStatement("select categories.name from categories where name = ?");
-	                    pstmt3.setString(1, request.getParameter("category")); //deals with injecting 
+	                    pstmt3 = conn.prepareStatement("select categories.name from categories where id = ?");
+	                    pstmt3.setInt(1, Integer.parseInt(request.getParameter("category"))); //deals with injecting 
 	                    
 						//check for unique sku
 	                    if (!rs.next()) 
@@ -183,7 +185,7 @@
 					if (request.getParameter("name") != "" && request.getParameter("price") != "") {
 	                    pstmt.setString(1, request.getParameter("name"));
 	                    pstmt.setString(4, request.getParameter("sku"));
-	                    pstmt.setString(2, request.getParameter("category"));
+	                    pstmt.setInt(2, Integer.parseInt(request.getParameter("category")));
 	                    pstmt.setInt(3, Integer.parseInt(request.getParameter("price")));
 	                    
 	                    pstmt4 = conn
@@ -215,8 +217,19 @@
                         .prepareStatement("DELETE FROM products WHERE sku = ?");
                     //run another query to decrement based upon the category where the product is 
                     pstmt.setString(1, request.getParameter("sku"));
-                    int rowCount = pstmt.executeUpdate();
-
+                    
+                    pstmt6 = conn.prepareStatement("select * from carts where sku = ?");
+                    pstmt6.setString(1, request.getParameter("sku"));
+                    rsCart = pstmt6.executeQuery();
+                    
+                    if(!rsCart.next())
+                    {
+                    	int rowCount = pstmt.executeUpdate();
+                    }
+                    else
+                    {
+                    	out.print("Can not delete product because it is still in a shopping cart");
+                    }
                     // Commit transaction
                     conn.commit();
                     conn.setAutoCommit(true);
@@ -253,18 +266,18 @@
             if(isSearch && searchBar.equals(""))
             {
             	pstmt = conn.prepareStatement("select * from products where category = ?");
-            	pstmt.setString(1, search);
+            	pstmt.setInt(1, Integer.parseInt(search));
             }
             else if(isSearch && !searchBar.equals(""))
             {
             	pstmt = conn.prepareStatement("select * from products where category = ? and name like ?");
-            	pstmt.setString(1, search);
-            	pstmt.setString(2, searchBar);
+            	pstmt.setInt(1, Integer.parseInt(search));
+            	pstmt.setString(2, "%"+searchBar+"%");
             }
             else if(!isSearch && !searchBar.equals(""))
             {
-            	pstmt = conn.prepareStatement("select * from products where name = ?");
-            	pstmt.setString(1, searchBar);
+            	pstmt = conn.prepareStatement("select * from products where name like ?");
+            	pstmt.setString(1, "%"+searchBar+"%");
             }
             else
             {
@@ -313,7 +326,7 @@
 			        		Statement categoryStatement = conn.createStatement();
                     		rsCategory = categoryStatement.executeQuery("select * from categories");
 			        		while(rsCategory.next()) {
-			        			out.print("<option value=\""+rsCategory.getString("name")+"\">"+rsCategory.getString("name")+"</option>");
+			        			out.print("<option value=\""+rsCategory.getInt("id")+"\">"+rsCategory.getString("name")+"</option>");
 			        		}
 			        		%>
 			        		
@@ -351,13 +364,22 @@
                 <td>
                     <!-- Start of dropdown for categories -->
 			        	  <select name="category">
-			        		<option value="<%=rs.getString("category")%>"><%=rs.getString("category")%></option>
+			        	  <%
+			        		  Statement categoryStatement3 = conn.createStatement();
+                    		  ResultSet rsCategory1 = null;
+                    		  PreparedStatement pstmt5 = null;
+                    		  pstmt5 = conn.prepareStatement("select * from categories where id = ?");
+                    		  pstmt5.setInt(1, rs.getInt("category"));
+                    		  rsCategory1 = pstmt5.executeQuery();
+                    		  rsCategory1.next();
+			        	  %>
+			        		<option value="<%=rs.getInt("category")%>"><%=rsCategory1.getString("name")%></option>
 			        		<%
 			        		Statement categoryStatement2 = conn.createStatement();
-                    		String categoryDropdown = rs.getString("category");
-                    		rsCategory = categoryStatement2.executeQuery("select * from categories where categories.name <> '"+categoryDropdown+"'");
+                    		int categoryDropdown = rs.getInt("category");
+                    		rsCategory = categoryStatement2.executeQuery("select * from categories where id <> "+categoryDropdown);
 			        		while(rsCategory.next()) {
-			        			out.print("<option value=\""+rsCategory.getString("name")+"\">"+rsCategory.getString("name")+"</option>");
+			        			out.print("<option value=\""+rsCategory.getInt("id")+"\">"+rsCategory.getString("name")+"</option>");
 			        		}
 			        		%>
 			        		

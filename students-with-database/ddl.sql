@@ -23,9 +23,8 @@ INSERT INTO users (state, role, age, name) values ('CA', 'owner', '99', 'simon')
 
 CREATE TABLE categories (
 id SERIAL PRIMARY KEY,
-description TEXT NOT NULL CHECK (char_length(description) > 0),
-name TEXT UNIQUE NOT NULL CHECK (char_length(name) > 0),
-numProducts INTEGER
+description TEXT,
+name TEXT UNIQUE NOT NULL CHECK (char_length(name) > 0)
 );
 
 INSERT INTO categories(description, name, numProducts) values ('This is my test description','test',0);
@@ -33,11 +32,11 @@ INSERT INTO categories(description, name, numProducts) values ('This is my test 
 CREATE TABLE products (
 name TEXT NOT NULL CHECK (char_length(name) > 0),
 sku TEXT UNIQUE NOT NULL CHECK (char_length(sku) > 0),
-category TEXT NOT NULL CHECK (char_length(category) > 0) references categories(name),
+category INTEGER NOT NULL CHECK (category > 0) references categories(id),
 price INTEGER CHECK (price > 0)
 );
 
-INSERT INTO products(name, sku, category, price) values ('testname', 'test008', 'test', 5);
+INSERT INTO products(name, sku, category, price) values ('testname', 'test008', 1, 5);
 
 CREATE TABLE carts (
 owner TEXT NOT NULL CHECK (char_length(owner) > 0) references users(name),

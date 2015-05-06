@@ -70,7 +70,7 @@
                     // Create the prepared statement and use it to
                     // INSERT student values INTO the students table.
                     pstmt = conn
-                    .prepareStatement("INSERT INTO categories (description, name,numProducts) VALUES (?, ?,0)");
+                    .prepareStatement("INSERT INTO categories (description, name) VALUES (?, ?)");
 
                     pstmt.setString(1, request.getParameter("description"));
                     pstmt.setString(2, request.getParameter("name"));
@@ -123,7 +123,7 @@
                     pstmt.setString(1, request.getParameter("name"));
                     Statement statement1 = conn.createStatement();
                     pstmt2 = conn.prepareStatement("select categories.name, categories.description, count(products.name) as numProduct " +
-                    		"from categories LEFT JOIN products ON categories.name = products.category where categories.name = ? " +
+                    		"from categories LEFT JOIN products ON categories.id = products.category where categories.name = ? " +
                     		"group by categories.name, categories.description having count(products.name) = 0");
                     pstmt2.setString(1, request.getParameter("name"));
                     rs = pstmt2.executeQuery();
@@ -153,7 +153,7 @@
                 // Use the created statement to SELECT
                 // the student attributes FROM the Student table.
                 rs = statement.executeQuery("select categories.name, categories.description, count(products.name) as numProduct " +
-                		"from categories LEFT JOIN products ON categories.name = products.category " +
+                		"from categories LEFT JOIN products ON categories.id = products.category " +
                 		"group by categories.name, categories.description");
                 //rs = statement.executeQuery("select * from products");
             %>
