@@ -61,8 +61,8 @@
             %>
             
             <% 
-          
-	          rsCategory = categoryStatement1.executeQuery("SELECT categories.name FROM categories");
+          //changed
+	          rsCategory = categoryStatement1.executeQuery("SELECT * FROM categories");
 	      
 			%>
 			   <b>Categories </b>
@@ -78,7 +78,8 @@
 	            
 				out.print("<li><a href=\"products_browsing.jsp\">All Products</a></li>");
 				while(rsCategory.next()){
-					out.print("<li><a href=\"products_browsing.jsp?search="+rsCategory.getString("name")+"&searchBar="+searchBar+"\">"+rsCategory.getString("name")+"</a></li>");
+					//changed
+					out.print("<li><a href=\"products_browsing.jsp?search="+rsCategory.getInt("id")+"&searchBar="+searchBar+"\">"+rsCategory.getString("name")+"</a></li>");
 				}
 
 	
@@ -117,12 +118,14 @@
             if(isSearch && searchBar.equals(""))
             {
             	pstmt = conn.prepareStatement("select * from products where category = ?");
-            	pstmt.setString(1, search);
+            	//changed
+            	pstmt.setInt(1, Integer.parseInt(search));
             }
             else if(isSearch && !searchBar.equals(""))
             {
             	pstmt = conn.prepareStatement("select * from products where category = ? and name like ?");
-            	pstmt.setString(1, search);
+            	//changed
+            	pstmt.setInt(1, Integer.parseInt(search));
             	pstmt.setString(2, "%"+searchBar+"%");
             }
             else if(!isSearch && !searchBar.equals(""))
